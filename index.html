@@ -214,6 +214,18 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
+        /* Add better mobile touch targets */
+        @media (max-width: 600px) {
+            .category-tab {
+                padding: 16px 20px;
+                min-width: 120px;
+            }
+            
+            input[type="number"], select {
+                font-size: 18px; /* Prevents zoom on iOS */
+            }
+        }
     </style>
 </head>
 <body>
@@ -240,8 +252,8 @@
                 <div class="input-group">
                     <label>From:</label>
                     <div class="input-row">
-                        <input type="number" id="fromValue" placeholder="Enter value" step="any">
-                        <select id="fromUnit"></select>
+                        <input type="number" id="fromValue" aria-label="Enter value to convert" placeholder="Enter value" step="any">
+                        <select id="fromUnit" aria-label="Select source unit"></select>
                     </div>
                 </div>
 
@@ -407,10 +419,12 @@
         }
 
         function convert() {
-            const value = parseFloat(fromValue.value);
-            if (isNaN(value)) {
+            const inputValue = fromValue.value;
+            const value = validateInput(inputValue); // Use the new validation function
+            
+            if (value === null) {
                 toValue.value = '';
-                resultDisplay.textContent = 'Enter a value to see the conversion';
+                // Don't reset resultDisplay here - showError already handles it
                 return;
             }
 
@@ -429,6 +443,7 @@
             const toUnitName = conversions[currentCategory].units[toUnit.value].name;
             
             resultDisplay.textContent = `${value} ${fromUnitName} = ${toValue.value} ${toUnitName}`;
+            resultDisplay.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'; // Ensure normal background
             resultDisplay.classList.add('pulse');
             setTimeout(() => resultDisplay.classList.remove('pulse'), 300);
         }
@@ -517,6 +532,40 @@
             toValue.value = '';
             resultDisplay.textContent = 'Enter a value to see the conversion';
             formulaDisplay.textContent = 'Select units to see the conversion formula';
+        }
+
+        function validateInput(value) {
+            if (value === '' || value === null || value === undefined) {
+                return null;
+            }
+            
+            // Check for multiple decimal points
+            if ((value.match(/\./g) || []).length > 1) {
+                showError('Invalid number: multiple decimal points');
+                return null;
+            }
+            
+            // Check for scientific notation or other non-numeric characters
+            if (!/^-?\d*\.?\d*$/.test(value)) {
+                showError('Please enter a valid number');
+                return null;
+            }
+            
+            const num = parseFloat(value);
+            if (isNaN(num)) {
+                showError('Please enter a valid number');
+                return null;
+            }
+            
+            return num;
+        }
+
+        function showError(message) {
+            resultDisplay.textContent = message;
+            resultDisplay.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+            setTimeout(() => {
+                resultDisplay.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+            }, 2000);
         }
 
         // Initialize the app

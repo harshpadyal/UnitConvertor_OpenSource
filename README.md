@@ -82,7 +82,7 @@ Open `index.html` in any modern web browser to start using the converter.
 
 2. **Navigate to the project directory:**
    ```bash
-   cd universal-unit-converter
+   cd UnitConvertor_OpenSource
    ```
 
 3. **Open in browser:**
@@ -191,12 +191,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by the need for a simple, accurate unit converter
 - Built with modern web standards and best practices
 - Icons and design elements follow Material Design principles
-
-## 📞 Contact
-
-- **Author**: Your Name
-- **Email**: your.email@example.com
-- **Project Link**: https://github.com/yourusername/universal-unit-converter
 
 ---
 
